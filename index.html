@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SE-TEA | Sistema Experto para la Detección de Trastornos Emocionales en Adolescentes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        clinical: {
+                            50: '#f0f7f7',
+                            100: '#d9ecec',
+                            200: '#b6dada',
+                            300: '#85c0c0',
+                            400: '#4ea0a2',
+                            500: '#338487',
+                            600: '#2b6b70',
+                            700: '#27575c',
+                            800: '#25484c',
+                            900: '#223d41',
+                        },
+                        navy: {
+                            800: '#162a45',
+                            900: '#0f1d30',
+                            950: '#09121e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-clinical-200 selection:text-navy-900 flex flex-col min-h-screen">
+
+    <!-- Notificación Toast (Reemplazo elegante de alert()) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-navy-900 text-white px-5 py-3.5 rounded-xl shadow-xl border border-slate-700/60 flex items-center gap-3 text-sm font-medium">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-clinical-400 shrink-0"></i>
+            <span id="toast-message">Configuración guardada correctamente.</span>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Superior -->
+    <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Identidad del Proyecto -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-900 to-clinical-600 flex items-center justify-center text-white shadow-sm">
+                    <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="font-display font-bold text-lg sm:text-xl text-navy-900 tracking-tight block leading-none">SE-TEA</span>
+                    <span class="text-[11px] sm:text-xs font-medium text-slate-500 tracking-wide">TecNM Campus Acapulco</span>
+                </div>
+            </div>
+
+            <!-- Navegación y Botón de Configuración Rápida -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 mr-2">
+                    <a href="#acerca" class="hover:text-clinical-600 transition-colors">¿Cómo funciona?</a>
+                    <a href="#arquitectura" class="hover:text-clinical-600 transition-colors">Arquitectura & Escalas</a>
+                    <a href="#autores" class="hover:text-clinical-600 transition-colors">Créditos</a>
+                </nav>
+                <button onclick="openConfigModal('all')" title="Configurar enlaces de Streamlit y Documentación" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition-all cursor-pointer">
+                    <i data-lucide="settings-2" class="w-4 h-4 text-clinical-600"></i>
+                    <span class="hidden sm:inline">Configurar Enlaces</span>
+                    <span class="sm:hidden">Enlaces</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow">
+        
+        <!-- HERO SECTION -->
+        <section id="acerca" class="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 bg-gradient-to-b from-white via-clinical-50/40 to-slate-50 border-b border-slate-200/60">
+            <!-- Decoración de fondo sutil -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-clinical-100/50 blur-3xl"></div>
+                <div class="absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-blue-100/40 blur-3xl"></div>
+            </div>
+
+            <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <!-- Badge Institucional -->
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-clinical-100/80 border border-clinical-200 text-clinical-800 text-xs sm:text-sm font-semibold mb-6 shadow-xs">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 text-clinical-600"></i>
+                    <span>Proyecto de Tesis · Instituto Tecnológico de Acapulco</span>
+                </div>
+
+                <!-- Título Principal -->
+                <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-[3.35rem] text-navy-900 tracking-tight leading-[1.15] mb-6">
+                    SE-TEA: Sistema Experto para la <span class="text-transparent bg-clip-text bg-gradient-to-r from-clinical-600 to-navy-800">Detección de Trastornos Emocionales</span> en Adolescentes
+                </h1>
+
+                <!-- Descripción Concisa y Clara del Funcionamiento -->
+                <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-600 leading-relaxed mb-10">
+                    Herramienta de apoyo al tamizaje psicoemocional impulsada por un <strong>motor de inferencia con encadenamiento hacia adelante</strong> y reglas deterministas <code class="px-1.5 py-0.5 rounded bg-slate-200/70 text-navy-900 font-mono text-xs sm:text-sm">IF-THEN</code>. Integra instrumentos clínicos validados (<strong>BDI-II</strong> para depresión, <strong>BAI</strong> para ansiedad y <strong>PSS-14</strong> para estrés percibido) sobre una arquitectura desarrollada en <strong>Python, Streamlit y MySQL</strong>.
+                </p>
+
+                <!-- DOS BOTONES PRINCIPALES DE LLAMADA A LA ACCIÓN (CTA) -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 max-w-2xl mx-auto">
+                    
+                    <!-- Botón 1: Ir al Sistema Experto (Con botón integrado para editar URL) -->
+                    <div class="flex items-stretch rounded-2xl shadow-lg shadow-navy-900/15 bg-navy-900 hover:bg-navy-800 transition-all group overflow-hidden border border-navy-800">
+                        <a id="btn-se-link" href="http://localhost:8501" target="_blank" rel="noopener noreferrer" class="flex-grow flex items-center justify-center gap-3 px-6 py-4 text-white font-semibold text-base sm:text-lg transition-colors">
+                            <i data-lucide="cpu" class="w-5 h-5 text-clinical-300 group-hover:scale-110 transition-transform"></i>
+                            <span>Ir al Sistema Experto</span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                        <button type="button" onclick="openConfigModal('se')" title="Editar enlace del Sistema Experto (Streamlit)" aria-label="Configurar URL del Sistema Experto" class="px-3.5 bg-navy-950/50 hover:bg-clinical-600 text-slate-300 hover:text-white border-l border-slate-700/70 flex items-center justify-center transition-colors cursor-pointer">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Botón 2: Ver Documentación (Con botón integrado para editar URL / vista previa) -->
+                    <div class="flex items-stretch rounded-2xl shadow-md shadow-slate-200/80 bg-white hover:bg-clinical-50/70 transition-all group overflow-hidden border-2 border-clinical-600/30 hover:border-clinical-600">
+                        <a id="btn-doc-link" href="#documentacion" onclick="handleDocClick(event)" class="flex-grow flex items-center justify-center gap-3 px-6 py-4 text-navy-900 font-semibold text-base sm:text-lg transition-colors">
+                            <i data-lucide="file-text" class="w-5 h-5 text-clinical-600 group-hover:scale-110 transition-transform"></i>
+                            <span>Ver Documentación</span>
+                            <i data-lucide="external-link" class="w-4 h-4 text-clinical-600/80"></i>
+                        </a>
+                        <button type="button" onclick="openConfigModal('doc')" title="Editar enlace de la Documentación Técnica" aria-label="Configurar URL de la Documentación" class="px-3.5 bg-slate-50 hover:bg-clinical-100 text-slate-500 hover:text-clinical-800 border-l border-slate-200 flex items-center justify-center transition-colors cursor-pointer">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Indicador discreto de rutas activas -->
+                <div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        App SE-TEA: <code id="display-se-url" class="text-slate-700 font-mono bg-slate-100 px-1.5 py-0.5 rounded max-w-[200px] truncate">http://localhost:8501</code>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-clinical-500"></span>
+                        Documentación: <code id="display-doc-url" class="text-slate-700 font-mono bg-slate-100 px-1.5 py-0.5 rounded max-w-[200px] truncate">Vista previa / Enlace editable</code>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE ARQUITECTURA E INSTRUMENTOS CLÍNICOS -->
+        <section id="arquitectura" class="py-16 sm:py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-xs font-bold uppercase tracking-widest text-clinical-600 block mb-2">Fundamento Técnico y Clínico</span>
+                <h2 class="font-display font-bold text-2xl sm:text-3xl text-navy-900 mb-3">Arquitectura del Sistema e Instrumentos</h2>
+                <p class="text-slate-600 text-sm sm:text-base">
+                    Combinación de ingeniería del conocimiento basada en reglas explícitas con escalas psicométricas estandarizadas para evaluación preventiva.
+                </p>
+            </div>
+
+            <!-- Grid de 3 Tarjetas Principales -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                
+                <!-- Tarjeta 1: Motor de Inferencia -->
+                <article class="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs hover:shadow-md hover:border-clinical-300 transition-all flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-navy-900/5 text-navy-900 flex items-center justify-center mb-5 border border-navy-900/10">
+                        <i data-lucide="git-branch" class="w-6 h-6 text-clinical-600"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-navy-900 mb-2.5">Motor de Inferencia IF-THEN</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-5 flex-grow">
+                        Implementa razonamiento mediante <strong>encadenamiento hacia adelante (Forward Chaining)</strong>. Evalúa los puntajes brutos y criterios sintomáticos para disparar reglas deterministas que clasifican niveles de severidad y detectan comorbilidades emocionales con total trazabilidad.
+                    </p>
+                    <div class="pt-4 border-t border-slate-100 flex flex-wrap gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium">Base de Conocimiento</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-clinical-50 text-clinical-700 text-xs font-medium">Lógica Determinista</span>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 2: Escalas Clínicas Validadas -->
+                <article class="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs hover:shadow-md hover:border-clinical-300 transition-all flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-clinical-500/10 text-clinical-600 flex items-center justify-center mb-5 border border-clinical-500/20">
+                        <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-navy-900 mb-2.5">Escalas Clínicas Validadas</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4 flex-grow">
+                        El módulo de adquisición de hechos estructura tres instrumentos psicométricos reconocidos internacionalmente en población adolescente:
+                    </p>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-700 mb-5">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-clinical-600 shrink-0 mt-0.5"></i>
+                            <span><strong>BDI-II:</strong> Inventario de Depresión de Beck-II (21 ítems).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-clinical-600 shrink-0 mt-0.5"></i>
+                            <span><strong>BAI:</strong> Inventario de Ansiedad de Beck (21 ítems).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-clinical-600 shrink-0 mt-0.5"></i>
+                            <span><strong>PSS-14:</strong> Escala de Estrés Percibido (14 ítems).</span>
+                        </li>
+                    </ul>
+                    <div class="pt-4 border-t border-slate-100 flex flex-wrap gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-clinical-50 text-clinical-700 text-xs font-medium">Tamizaje Integral</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium">Baremos Clínicos</span>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 3: Persistencia y Stack Tecnológico -->
+                <article class="bg-white rounded-2xl p-7 border border-slate-200/90 shadow-xs hover:shadow-md hover:border-clinical-300 transition-all flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center mb-5 border border-blue-500/20">
+                        <i data-lucide="database" class="w-6 h-6 text-navy-800"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-navy-900 mb-2.5">Persistencia en MySQL + Streamlit</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-5 flex-grow">
+                        Interfaz web ágil e intuitiva construida en <strong>Python y Streamlit</strong> para la aplicación de reactivos y visualización de resultados, respaldada por una base de datos relacional en <strong>MySQL</strong> que garantiza el almacenamiento seguro de evaluaciones, perfiles e historial diagnóstico.
+                    </p>
+                    <div class="pt-4 border-t border-slate-100 flex flex-wrap gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium">Python 3</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-medium">Streamlit</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-clinical-50 text-clinical-700 text-xs font-medium">MySQL</span>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Nota Ética / Clínica -->
+            <div class="mt-10 bg-clinical-50/80 border border-clinical-200/80 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white text-clinical-600 flex items-center justify-center shrink-0 shadow-xs border border-clinical-100">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <strong class="text-navy-900">Aviso Académico y Clínico:</strong> SE-TEA es una herramienta de apoyo computacional para la detección temprana y orientación preventiva. Los resultados generados por el motor de inferencia no sustituyen una valoración clínica ni un diagnóstico médico o psicológico profesional.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA CON CRÉDITOS DE AUTORES E INSTITUCIÓN -->
+    <footer id="autores" class="bg-navy-900 text-slate-300 border-t border-navy-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-slate-800">
+                
+                <!-- Columna Institución -->
+                <div class="md:col-span-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-clinical-600 flex items-center justify-center text-white">
+                            <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl text-white tracking-tight">SE-TEA</span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed mb-3">
+                        Sistema Experto para la Detección de Trastornos Emocionales en Adolescentes.
+                    </p>
+                    <p class="text-xs text-clinical-300 font-medium">
+                        Tecnológico Nacional de México (TecNM) · Instituto Tecnológico de Acapulco
+                    </p>
+                </div>
+
+                <!-- Columna Autores -->
+                <div class="md:col-span-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Desarrollado por</h4>
+                    <ul class="space-y-2.5 text-sm text-white">
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-7 h-7 rounded-full bg-navy-800 border border-slate-700 flex items-center justify-center text-clinical-300 text-xs font-bold">JA</span>
+                            <span>Joaquín Samuel Aquino Domínguez</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <span class="w-7 h-7 rounded-full bg-navy-800 border border-slate-700 flex items-center justify-center text-clinical-300 text-xs font-bold">AC</span>
+                            <span>Cortés Rodríguez Andrea Guadalupe</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Columna Accesos Directos -->
+                <div class="md:col-span-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Accesos del Proyecto</h4>
+                    <div class="flex flex-col space-y-2.5 text-sm">
+                        <a id="footer-se-link" href="http://localhost:8501" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-slate-300 hover:text-clinical-300 transition-colors">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            <span>Ejecutar Sistema Experto</span>
+                        </a>
+                        <a id="footer-doc-link" href="#documentacion" onclick="handleDocClick(event)" class="inline-flex items-center gap-2 text-slate-300 hover:text-clinical-300 transition-colors">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Documentación Técnica</span>
+                        </a>
+                        <button onclick="openConfigModal('all')" class="inline-flex items-center gap-2 text-left text-slate-400 hover:text-white transition-colors cursor-pointer pt-1">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            <span>Editar URLs de destino</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+                <p>© 2026 SE-TEA · Proyecto Académico y de Tesis. Todos los derechos reservados.</p>
+                <p>Acapulco de Juárez, Guerrero, México.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: CONFIGURACIÓN DE ENLACES (Streamlit y Documentación) -->
+    <div id="config-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs transition-opacity">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-clinical-100 text-clinical-700 flex items-center justify-center">
+                        <i data-lucide="link" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-base sm:text-lg text-navy-900">Configurar Enlaces del Proyecto</h3>
+                </div>
+                <button onclick="closeConfigModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="links-form" onsubmit="saveLinks(event)" class="p-6 space-y-5">
+                <p class="text-xs sm:text-sm text-slate-600">
+                    Pega aquí tus URLs reales (por ejemplo, tu app desplegada en <strong>Streamlit Cloud</strong> o puerto local, y tu documento de tesis en <strong>Google Docs / Drive / PDF</strong>). Se guardarán automáticamente en tu navegador.
+                </p>
+
+                <!-- Input URL Sistema Experto -->
+                <div id="field-se">
+                    <label for="input-se-url" class="block text-xs font-bold uppercase tracking-wider text-navy-900 mb-1.5">
+                        1. URL del Sistema Experto (Streamlit)
+                    </label>
+                    <div class="relative">
+                        <input type="url" id="input-se-url" placeholder="http://localhost:8501 o https://tu-app.streamlit.app" required
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500">
+                    </div>
+                    <div class="mt-1.5 flex gap-2">
+                        <button type="button" onclick="setPresetSe('http://localhost:8501')" class="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer">Usar localhost:8501</button>
+                    </div>
+                </div>
+
+                <!-- Input URL Documentación -->
+                <div id="field-doc">
+                    <label for="input-doc-url" class="block text-xs font-bold uppercase tracking-wider text-navy-900 mb-1.5">
+                        2. URL de la Documentación Técnica (Google Docs / Drive / PDF)
+                    </label>
+                    <div class="relative">
+                        <input type="url" id="input-doc-url" placeholder="https://docs.google.com/document/d/... (Dejar vacío para vista previa integrada)"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500">
+                    </div>
+                    <p class="mt-1.5 text-[11px] text-slate-500">
+                        Si dejas este campo vacío, el botón <strong>"Ver Documentación"</strong> abrirá la ficha técnica integrada en esta página.
+                    </p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeConfigModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-clinical-600 hover:bg-clinical-700 shadow-sm transition-colors cursor-pointer flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Guardar Enlaces</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: VISTA PREVIA DE DOCUMENTACIÓN TÉCNICA (Cuando aún no se pega un enlace externo) -->
+    <div id="doc-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Header Modal Doc -->
+            <div class="px-6 py-4 bg-navy-900 text-white flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="file-text" class="w-5 h-5 text-clinical-300"></i>
+                    <div>
+                        <h3 class="font-display font-bold text-base sm:text-lg leading-tight">Documentación Técnica · SE-TEA</h3>
+                        <p class="text-xs text-slate-300">Resumen ejecutivo del documento de tesis</p>
+                    </div>
+                </div>
+                <button onclick="closeDocPreviewModal()" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-navy-800 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Contenido de la Ficha Documental -->
+            <div class="p-6 overflow-y-auto space-y-5 text-sm text-slate-700 leading-relaxed">
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="text-xs text-amber-900">
+                        <strong>¿Ya tienes tu enlace de Google Docs, Drive o PDF?</strong> Puedes vincularlo directamente al botón principal.
+                    </div>
+                    <button onclick="switchToDocConfig()" class="shrink-0 px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors cursor-pointer">
+                        Vincular URL externa
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">1. Identificación del Proyecto</h4>
+                    <p><strong>Título:</strong> SE-TEA: Sistema Experto para la Detección de Trastornos Emocionales en Adolescentes.<br>
+                    <strong>Institución:</strong> Instituto Tecnológico de Acapulco (TecNM Campus Acapulco).<br>
+                    <strong>Autores:</strong> Joaquín Samuel Aquino Domínguez y Cortés Rodríguez Andrea Guadalupe.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">2. Arquitectura del Conocimiento</h4>
+                    <p>El sistema separa la base de hechos (respuestas psicométricas del adolescente almacenadas en MySQL) de la base de reglas de producción (<code class="bg-slate-100 px-1 rounded">IF condición THEN conclusión</code>). El motor de inferencia opera con encadenamiento hacia adelante para determinar niveles de sintomatología (mínima, leve, moderada o grave) en depresión, ansiedad y estrés percibido, emitiendo recomendaciones estructuradas.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">3. Estructura de la Memoria Técnica</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-600">
+                        <li>Capítulo I: Planteamiento del problema y salud emocional en adolescentes.</li>
+                        <li>Capítulo II: Marco teórico (Sistemas Basados en Conocimiento, BDI-II, BAI y PSS-14).</li>
+                        <li>Capítulo III: Ingeniería del conocimiento, adquisición de reglas y modelado relacional en MySQL.</li>
+                        <li>Capítulo IV: Desarrollo de la interfaz en Python/Streamlit y pruebas de validación.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Modal Doc -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+                <button onclick="switchToDocConfig()" class="text-xs sm:text-sm font-semibold text-clinical-700 hover:text-clinical-800 inline-flex items-center gap-1.5 cursor-pointer">
+                    <i data-lucide="link" class="w-4 h-4"></i>
+                    <span>Configurar enlace a Google Docs / PDF</span>
+                </button>
+                <button onclick="closeDocPreviewModal()" class="px-4 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer">
+                    Cerrar vista previa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE INTERACTIVIDAD Y GESTIÓN DE ENLACES -->
+    <script>
+        // Inicializar iconos Lucide
+        lucide.createIcons();
+
+        // Claves de almacenamiento local
+        const STORAGE_KEY_SE = 'setea_system_url';
+        const STORAGE_KEY_DOC = 'setea_doc_url';
+        const DEFAULT_SE_URL = 'http://localhost:8501';
+
+        // Estado actual de URLs
+        let currentSeUrl = localStorage.getItem(STORAGE_KEY_SE) || DEFAULT_SE_URL;
+        let currentDocUrl = localStorage.getItem(STORAGE_KEY_DOC) || '';
+
+        // Actualizar interfaz con las URLs configuradas
+        function updateUI() {
+            const btnSe = document.getElementById('btn-se-link');
+            const footerSe = document.getElementById('footer-se-link');
+            const displaySe = document.getElementById('display-se-url');
+
+            const btnDoc = document.getElementById('btn-doc-link');
+            const footerDoc = document.getElementById('footer-doc-link');
+            const displayDoc = document.getElementById('display-doc-url');
+
+            // Actualizar enlaces del Sistema Experto
+            btnSe.href = currentSeUrl;
+            footerSe.href = currentSeUrl;
+            displaySe.textContent = currentSeUrl;
+
+            // Actualizar enlaces de la Documentación
+            if (currentDocUrl && currentDocUrl.trim() !== '') {
+                btnDoc.href = currentDocUrl;
+                btnDoc.target = '_blank';
+                btnDoc.rel = 'noopener noreferrer';
+                
+                footerDoc.href = currentDocUrl;
+                footerDoc.target = '_blank';
+                footerDoc.rel = 'noopener noreferrer';
+
+                displayDoc.textContent = currentDocUrl;
+            } else {
+                btnDoc.href = '#documentacion';
+                btnDoc.removeAttribute('target');
+                btnDoc.removeAttribute('rel');
+
+                footerDoc.href = '#documentacion';
+                footerDoc.removeAttribute('target');
+                footerDoc.removeAttribute('rel');
+
+                displayDoc.textContent = 'Vista previa integrada (clic en lápiz para enlazar)';
+            }
+        }
+
+        // Manejador de clic en "Ver Documentación"
+        function handleDocClick(event) {
+            if (!currentDocUrl || currentDocUrl.trim() === '') {
+                event.preventDefault();
+                openDocPreviewModal();
+            }
+            // Si existe una URL válida, el navegador abrirá el enlace en una nueva pestaña de forma nativa
+        }
+
+        // Control del Modal de Configuración
+        function openConfigModal(focusSection = 'all') {
+            const modal = document.getElementById('config-modal');
+            const inputSe = document.getElementById('input-se-url');
+            const inputDoc = document.getElementById('input-doc-url');
+
+            inputSe.value = currentSeUrl;
+            inputDoc.value = currentDocUrl;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            setTimeout(() => {
+                if (focusSection === 'doc') {
+                    inputDoc.focus();
+                } else {
+                    inputSe.focus();
+                }
+            }, 50);
+        }
+
+        function closeConfigModal() {
+            const modal = document.getElementById('config-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setPresetSe(url) {
+            document.getElementById('input-se-url').value = url;
+        }
+
+        // Guardar enlaces en localStorage
+        function saveLinks(event) {
+            event.preventDefault();
+            const newSe = document.getElementById('input-se-url').value.trim();
+            const newDoc = document.getElementById('input-doc-url').value.trim();
+
+            if (newSe) {
+                currentSeUrl = newSe;
+                localStorage.setItem(STORAGE_KEY_SE, currentSeUrl);
+            }
+
+            currentDocUrl = newDoc;
+            if (newDoc) {
+                localStorage.setItem(STORAGE_KEY_DOC, currentDocUrl);
+            } else {
+                localStorage.removeItem(STORAGE_KEY_DOC);
+            }
+
+            updateUI();
+            closeConfigModal();
+            showToast('Enlaces actualizados correctamente.');
+        }
+
+        // Control del Modal de Vista Previa de Documentación
+        function openDocPreviewModal() {
+            const modal = document.getElementById('doc-preview-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDocPreviewModal() {
+            const modal = document.getElementById('doc-preview-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function switchToDocConfig() {
+            closeDocPreviewModal();
+            openConfigModal('doc');
+        }
+
+        // Notificación Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3200);
+        }
+
+        // Cerrar modales al hacer clic fuera del contenedor
+        window.addEventListener('click', (e) => {
+            const configModal = document.getElementById('config-modal');
+            const docModal = document.getElementById('doc-preview-modal');
+            if (e.target === configModal) closeConfigModal();
+            if (e.target === docModal) closeDocPreviewModal();
+        });
+
+        // Cerrar modales con tecla Escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeConfigModal();
+                closeDocPreviewModal();
+            }
+        });
+
+        // Inicializar estado al cargar
+        updateUI();
+    </script>
+</body>
+</html>
