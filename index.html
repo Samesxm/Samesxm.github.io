@@ -47,14 +47,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-clinical-200 selection:text-navy-900 flex flex-col min-h-screen">
 
-    <!-- Notificación Toast (Reemplazo elegante de alert()) -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-navy-900 text-white px-5 py-3.5 rounded-xl shadow-xl border border-slate-700/60 flex items-center gap-3 text-sm font-medium">
-            <i data-lucide="check-circle-2" class="w-5 h-5 text-clinical-400 shrink-0"></i>
-            <span id="toast-message">Configuración guardada correctamente.</span>
-        </div>
-    </div>
-
     <!-- Barra de Navegación Superior -->
     <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
@@ -69,18 +61,17 @@
                 </div>
             </div>
 
-            <!-- Navegación y Botón de Configuración Rápida -->
-            <div class="flex items-center gap-2 sm:gap-4">
-                <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 mr-2">
+            <!-- Navegación y Acceso Directo -->
+            <div class="flex items-center gap-4 sm:gap-6">
+                <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                     <a href="#acerca" class="hover:text-clinical-600 transition-colors">¿Cómo funciona?</a>
                     <a href="#arquitectura" class="hover:text-clinical-600 transition-colors">Arquitectura & Escalas</a>
                     <a href="#autores" class="hover:text-clinical-600 transition-colors">Créditos</a>
                 </nav>
-                <button onclick="openConfigModal('all')" title="Configurar enlaces de Streamlit y Documentación" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition-all cursor-pointer">
-                    <i data-lucide="settings-2" class="w-4 h-4 text-clinical-600"></i>
-                    <span class="hidden sm:inline">Configurar Enlaces</span>
-                    <span class="sm:hidden">Enlaces</span>
-                </button>
+                <a href="https://se-tea-gqymttrmbjebq5hrb5g7ul.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-navy-900 hover:bg-navy-800 shadow-xs transition-all">
+                    <span>Abrir App</span>
+                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-clinical-300"></i>
+                </a>
             </div>
         </div>
     </header>
@@ -100,7 +91,7 @@
                 <!-- Badge Institucional -->
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-clinical-100/80 border border-clinical-200 text-clinical-800 text-xs sm:text-sm font-semibold mb-6 shadow-xs">
                     <i data-lucide="graduation-cap" class="w-4 h-4 text-clinical-600"></i>
-                    <span>Proyecto de Tesis · Instituto Tecnológico de Acapulco</span>
+                    <span>Proyecto Académico · Instituto Tecnológico de Acapulco</span>
                 </div>
 
                 <!-- Título Principal -->
@@ -113,44 +104,20 @@
                     Herramienta de apoyo al tamizaje psicoemocional impulsada por un <strong>motor de inferencia con encadenamiento hacia adelante</strong> y reglas deterministas <code class="px-1.5 py-0.5 rounded bg-slate-200/70 text-navy-900 font-mono text-xs sm:text-sm">IF-THEN</code>. Integra instrumentos clínicos validados (<strong>BDI-II</strong> para depresión, <strong>BAI</strong> para ansiedad y <strong>PSS-14</strong> para estrés percibido) sobre una arquitectura desarrollada en <strong>Python, Streamlit y MySQL</strong>.
                 </p>
 
-                <!-- DOS BOTONES PRINCIPALES DE LLAMADA A LA ACCIÓN (CTA) -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 max-w-2xl mx-auto">
-                    
-                    <!-- Botón 1: Ir al Sistema Experto (Con botón integrado para editar URL) -->
-                    <div class="flex items-stretch rounded-2xl shadow-lg shadow-navy-900/15 bg-navy-900 hover:bg-navy-800 transition-all group overflow-hidden border border-navy-800">
-                        <a id="btn-se-link" href="http://localhost:8501" target="_blank" rel="noopener noreferrer" class="flex-grow flex items-center justify-center gap-3 px-6 py-4 text-white font-semibold text-base sm:text-lg transition-colors">
-                            <i data-lucide="cpu" class="w-5 h-5 text-clinical-300 group-hover:scale-110 transition-transform"></i>
-                            <span>Ir al Sistema Experto</span>
-                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
-                        </a>
-                        <button type="button" onclick="openConfigModal('se')" title="Editar enlace del Sistema Experto (Streamlit)" aria-label="Configurar URL del Sistema Experto" class="px-3.5 bg-navy-950/50 hover:bg-clinical-600 text-slate-300 hover:text-white border-l border-slate-700/70 flex items-center justify-center transition-colors cursor-pointer">
-                            <i data-lucide="pencil" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-
-                    <!-- Botón 2: Ver Documentación (Con botón integrado para editar URL / vista previa) -->
-                    <div class="flex items-stretch rounded-2xl shadow-md shadow-slate-200/80 bg-white hover:bg-clinical-50/70 transition-all group overflow-hidden border-2 border-clinical-600/30 hover:border-clinical-600">
-                        <a id="btn-doc-link" href="#documentacion" onclick="handleDocClick(event)" class="flex-grow flex items-center justify-center gap-3 px-6 py-4 text-navy-900 font-semibold text-base sm:text-lg transition-colors">
-                            <i data-lucide="file-text" class="w-5 h-5 text-clinical-600 group-hover:scale-110 transition-transform"></i>
-                            <span>Ver Documentación</span>
-                            <i data-lucide="external-link" class="w-4 h-4 text-clinical-600/80"></i>
-                        </a>
-                        <button type="button" onclick="openConfigModal('doc')" title="Editar enlace de la Documentación Técnica" aria-label="Configurar URL de la Documentación" class="px-3.5 bg-slate-50 hover:bg-clinical-100 text-slate-500 hover:text-clinical-800 border-l border-slate-200 flex items-center justify-center transition-colors cursor-pointer">
-                            <i data-lucide="pencil" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-
+                <!-- BOTÓN PRINCIPAL DE LLAMADA A LA ACCIÓN (CTA) -->
+                <div class="flex justify-center">
+                    <a href="https://se-tea-gqymttrmbjebq5hrb5g7ul.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl shadow-lg shadow-navy-900/15 bg-navy-900 hover:bg-navy-800 text-white font-semibold text-base sm:text-lg transition-all group border border-navy-800">
+                        <i data-lucide="cpu" class="w-5 h-5 text-clinical-300 group-hover:scale-110 transition-transform"></i>
+                        <span>Ir al Sistema Experto</span>
+                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                    </a>
                 </div>
 
-                <!-- Indicador discreto de rutas activas -->
-                <div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        App SE-TEA: <code id="display-se-url" class="text-slate-700 font-mono bg-slate-100 px-1.5 py-0.5 rounded max-w-[200px] truncate">http://localhost:8501</code>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-clinical-500"></span>
-                        Documentación: <code id="display-doc-url" class="text-slate-700 font-mono bg-slate-100 px-1.5 py-0.5 rounded max-w-[200px] truncate">Vista previa / Enlace editable</code>
+                <!-- Indicador de estado en línea -->
+                <div class="mt-6 flex items-center justify-center text-xs text-slate-500">
+                    <span class="inline-flex items-center gap-2 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Aplicación desplegada en Streamlit Cloud</span>
                     </span>
                 </div>
             </div>
@@ -280,322 +247,28 @@
                     </ul>
                 </div>
 
-                <!-- Columna Accesos Directos -->
+                <!-- Columna Acceso Directo -->
                 <div class="md:col-span-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Accesos del Proyecto</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Acceso Directo</h4>
                     <div class="flex flex-col space-y-2.5 text-sm">
-                        <a id="footer-se-link" href="http://localhost:8501" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-slate-300 hover:text-clinical-300 transition-colors">
+                        <a href="https://se-tea-gqymttrmbjebq5hrb5g7ul.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-slate-300 hover:text-clinical-300 transition-colors">
                             <i data-lucide="external-link" class="w-4 h-4"></i>
                             <span>Ejecutar Sistema Experto</span>
                         </a>
-                        <a id="footer-doc-link" href="#documentacion" onclick="handleDocClick(event)" class="inline-flex items-center gap-2 text-slate-300 hover:text-clinical-300 transition-colors">
-                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                            <span>Documentación Técnica</span>
-                        </a>
-                        <button onclick="openConfigModal('all')" class="inline-flex items-center gap-2 text-left text-slate-400 hover:text-white transition-colors cursor-pointer pt-1">
-                            <i data-lucide="settings" class="w-4 h-4"></i>
-                            <span>Editar URLs de destino</span>
-                        </button>
                     </div>
                 </div>
             </div>
 
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-                <p>© 2026 SE-TEA · Proyecto Académico y de Tesis. Todos los derechos reservados.</p>
+                <p>© 2026 SE-TEA · Proyecto Académico. Todos los derechos reservados.</p>
                 <p>Acapulco de Juárez, Guerrero, México.</p>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL 1: CONFIGURACIÓN DE ENLACES (Streamlit y Documentación) -->
-    <div id="config-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs transition-opacity">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-clinical-100 text-clinical-700 flex items-center justify-center">
-                        <i data-lucide="link" class="w-4 h-4"></i>
-                    </div>
-                    <h3 class="font-display font-bold text-base sm:text-lg text-navy-900">Configurar Enlaces del Proyecto</h3>
-                </div>
-                <button onclick="closeConfigModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form id="links-form" onsubmit="saveLinks(event)" class="p-6 space-y-5">
-                <p class="text-xs sm:text-sm text-slate-600">
-                    Pega aquí tus URLs reales (por ejemplo, tu app desplegada en <strong>Streamlit Cloud</strong> o puerto local, y tu documento de tesis en <strong>Google Docs / Drive / PDF</strong>). Se guardarán automáticamente en tu navegador.
-                </p>
-
-                <!-- Input URL Sistema Experto -->
-                <div id="field-se">
-                    <label for="input-se-url" class="block text-xs font-bold uppercase tracking-wider text-navy-900 mb-1.5">
-                        1. URL del Sistema Experto (Streamlit)
-                    </label>
-                    <div class="relative">
-                        <input type="url" id="input-se-url" placeholder="http://localhost:8501 o https://tu-app.streamlit.app" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500">
-                    </div>
-                    <div class="mt-1.5 flex gap-2">
-                        <button type="button" onclick="setPresetSe('http://localhost:8501')" class="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer">Usar localhost:8501</button>
-                    </div>
-                </div>
-
-                <!-- Input URL Documentación -->
-                <div id="field-doc">
-                    <label for="input-doc-url" class="block text-xs font-bold uppercase tracking-wider text-navy-900 mb-1.5">
-                        2. URL de la Documentación Técnica (Google Docs / Drive / PDF)
-                    </label>
-                    <div class="relative">
-                        <input type="url" id="input-doc-url" placeholder="https://docs.google.com/document/d/... (Dejar vacío para vista previa integrada)"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:border-clinical-500">
-                    </div>
-                    <p class="mt-1.5 text-[11px] text-slate-500">
-                        Si dejas este campo vacío, el botón <strong>"Ver Documentación"</strong> abrirá la ficha técnica integrada en esta página.
-                    </p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeConfigModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-clinical-600 hover:bg-clinical-700 shadow-sm transition-colors cursor-pointer flex items-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i>
-                        <span>Guardar Enlaces</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL 2: VISTA PREVIA DE DOCUMENTACIÓN TÉCNICA (Cuando aún no se pega un enlace externo) -->
-    <div id="doc-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-            <!-- Header Modal Doc -->
-            <div class="px-6 py-4 bg-navy-900 text-white flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="file-text" class="w-5 h-5 text-clinical-300"></i>
-                    <div>
-                        <h3 class="font-display font-bold text-base sm:text-lg leading-tight">Documentación Técnica · SE-TEA</h3>
-                        <p class="text-xs text-slate-300">Resumen ejecutivo del documento de tesis</p>
-                    </div>
-                </div>
-                <button onclick="closeDocPreviewModal()" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-navy-800 transition-colors cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <!-- Contenido de la Ficha Documental -->
-            <div class="p-6 overflow-y-auto space-y-5 text-sm text-slate-700 leading-relaxed">
-                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="text-xs text-amber-900">
-                        <strong>¿Ya tienes tu enlace de Google Docs, Drive o PDF?</strong> Puedes vincularlo directamente al botón principal.
-                    </div>
-                    <button onclick="switchToDocConfig()" class="shrink-0 px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors cursor-pointer">
-                        Vincular URL externa
-                    </button>
-                </div>
-
-                <div>
-                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">1. Identificación del Proyecto</h4>
-                    <p><strong>Título:</strong> SE-TEA: Sistema Experto para la Detección de Trastornos Emocionales en Adolescentes.<br>
-                    <strong>Institución:</strong> Instituto Tecnológico de Acapulco (TecNM Campus Acapulco).<br>
-                    <strong>Autores:</strong> Joaquín Samuel Aquino Domínguez y Cortés Rodríguez Andrea Guadalupe.</p>
-                </div>
-
-                <div>
-                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">2. Arquitectura del Conocimiento</h4>
-                    <p>El sistema separa la base de hechos (respuestas psicométricas del adolescente almacenadas en MySQL) de la base de reglas de producción (<code class="bg-slate-100 px-1 rounded">IF condición THEN conclusión</code>). El motor de inferencia opera con encadenamiento hacia adelante para determinar niveles de sintomatología (mínima, leve, moderada o grave) en depresión, ansiedad y estrés percibido, emitiendo recomendaciones estructuradas.</p>
-                </div>
-
-                <div>
-                    <h4 class="font-display font-bold text-navy-900 text-base mb-1">3. Estructura de la Memoria Técnica</h4>
-                    <ul class="list-disc pl-5 space-y-1 text-slate-600">
-                        <li>Capítulo I: Planteamiento del problema y salud emocional en adolescentes.</li>
-                        <li>Capítulo II: Marco teórico (Sistemas Basados en Conocimiento, BDI-II, BAI y PSS-14).</li>
-                        <li>Capítulo III: Ingeniería del conocimiento, adquisición de reglas y modelado relacional en MySQL.</li>
-                        <li>Capítulo IV: Desarrollo de la interfaz en Python/Streamlit y pruebas de validación.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Footer Modal Doc -->
-            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
-                <button onclick="switchToDocConfig()" class="text-xs sm:text-sm font-semibold text-clinical-700 hover:text-clinical-800 inline-flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="link" class="w-4 h-4"></i>
-                    <span>Configurar enlace a Google Docs / PDF</span>
-                </button>
-                <button onclick="closeDocPreviewModal()" class="px-4 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer">
-                    Cerrar vista previa
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPTS DE INTERACTIVIDAD Y GESTIÓN DE ENLACES -->
+    <!-- Inicialización de iconos Lucide -->
     <script>
-        // Inicializar iconos Lucide
         lucide.createIcons();
-
-        // Claves de almacenamiento local
-        const STORAGE_KEY_SE = 'setea_system_url';
-        const STORAGE_KEY_DOC = 'setea_doc_url';
-        const DEFAULT_SE_URL = 'http://localhost:8501';
-
-        // Estado actual de URLs
-        let currentSeUrl = localStorage.getItem(STORAGE_KEY_SE) || DEFAULT_SE_URL;
-        let currentDocUrl = localStorage.getItem(STORAGE_KEY_DOC) || '';
-
-        // Actualizar interfaz con las URLs configuradas
-        function updateUI() {
-            const btnSe = document.getElementById('btn-se-link');
-            const footerSe = document.getElementById('footer-se-link');
-            const displaySe = document.getElementById('display-se-url');
-
-            const btnDoc = document.getElementById('btn-doc-link');
-            const footerDoc = document.getElementById('footer-doc-link');
-            const displayDoc = document.getElementById('display-doc-url');
-
-            // Actualizar enlaces del Sistema Experto
-            btnSe.href = currentSeUrl;
-            footerSe.href = currentSeUrl;
-            displaySe.textContent = currentSeUrl;
-
-            // Actualizar enlaces de la Documentación
-            if (currentDocUrl && currentDocUrl.trim() !== '') {
-                btnDoc.href = currentDocUrl;
-                btnDoc.target = '_blank';
-                btnDoc.rel = 'noopener noreferrer';
-                
-                footerDoc.href = currentDocUrl;
-                footerDoc.target = '_blank';
-                footerDoc.rel = 'noopener noreferrer';
-
-                displayDoc.textContent = currentDocUrl;
-            } else {
-                btnDoc.href = '#documentacion';
-                btnDoc.removeAttribute('target');
-                btnDoc.removeAttribute('rel');
-
-                footerDoc.href = '#documentacion';
-                footerDoc.removeAttribute('target');
-                footerDoc.removeAttribute('rel');
-
-                displayDoc.textContent = 'Vista previa integrada (clic en lápiz para enlazar)';
-            }
-        }
-
-        // Manejador de clic en "Ver Documentación"
-        function handleDocClick(event) {
-            if (!currentDocUrl || currentDocUrl.trim() === '') {
-                event.preventDefault();
-                openDocPreviewModal();
-            }
-            // Si existe una URL válida, el navegador abrirá el enlace en una nueva pestaña de forma nativa
-        }
-
-        // Control del Modal de Configuración
-        function openConfigModal(focusSection = 'all') {
-            const modal = document.getElementById('config-modal');
-            const inputSe = document.getElementById('input-se-url');
-            const inputDoc = document.getElementById('input-doc-url');
-
-            inputSe.value = currentSeUrl;
-            inputDoc.value = currentDocUrl;
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            setTimeout(() => {
-                if (focusSection === 'doc') {
-                    inputDoc.focus();
-                } else {
-                    inputSe.focus();
-                }
-            }, 50);
-        }
-
-        function closeConfigModal() {
-            const modal = document.getElementById('config-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function setPresetSe(url) {
-            document.getElementById('input-se-url').value = url;
-        }
-
-        // Guardar enlaces en localStorage
-        function saveLinks(event) {
-            event.preventDefault();
-            const newSe = document.getElementById('input-se-url').value.trim();
-            const newDoc = document.getElementById('input-doc-url').value.trim();
-
-            if (newSe) {
-                currentSeUrl = newSe;
-                localStorage.setItem(STORAGE_KEY_SE, currentSeUrl);
-            }
-
-            currentDocUrl = newDoc;
-            if (newDoc) {
-                localStorage.setItem(STORAGE_KEY_DOC, currentDocUrl);
-            } else {
-                localStorage.removeItem(STORAGE_KEY_DOC);
-            }
-
-            updateUI();
-            closeConfigModal();
-            showToast('Enlaces actualizados correctamente.');
-        }
-
-        // Control del Modal de Vista Previa de Documentación
-        function openDocPreviewModal() {
-            const modal = document.getElementById('doc-preview-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeDocPreviewModal() {
-            const modal = document.getElementById('doc-preview-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function switchToDocConfig() {
-            closeDocPreviewModal();
-            openConfigModal('doc');
-        }
-
-        // Notificación Toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            toastMsg.textContent = message;
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3200);
-        }
-
-        // Cerrar modales al hacer clic fuera del contenedor
-        window.addEventListener('click', (e) => {
-            const configModal = document.getElementById('config-modal');
-            const docModal = document.getElementById('doc-preview-modal');
-            if (e.target === configModal) closeConfigModal();
-            if (e.target === docModal) closeDocPreviewModal();
-        });
-
-        // Cerrar modales con tecla Escape
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeConfigModal();
-                closeDocPreviewModal();
-            }
-        });
-
-        // Inicializar estado al cargar
-        updateUI();
     </script>
 </body>
 </html>
